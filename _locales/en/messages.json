@@ -1,0 +1,62 @@
+{
+    "dataSaved": {
+        "message": "Data saved sucessfully!",
+        "description": "Data saved sucessfully!"
+    },
+    "savedatabtn": {
+        "message": "SAVE DATA",
+        "description": "SAVE DATA"
+    },
+    "addmembersbtn": {
+        "message": "ADD ORG MEMBERS",
+        "description": "ADD ORG MEMBERS"
+    },
+    "erasemembersbtn": {
+        "message": "ERASE NON MBR",
+        "description": "ERASE NON MEMBERS"
+    },
+    "msg_are_not_org_page": {
+        "message": "You are not on your org members page. Dismiss request.",
+        "description": "You are not on your org members page. Dismiss request."
+    },
+    "orgname_label": {
+        "message": "Org Name:",
+        "description": "Org Name:"
+    },
+    "prtnickname_label": {
+        "message": "Protected Nicknames:",
+        "description": "Protected Nicknames:"
+    },
+    "following": {
+        "message": "Following",
+        "description": "Following"
+    },
+    "new_added": {
+        "message": "New following",
+        "description": "New following"
+    },
+    "to_following": {
+        "message": "To following",
+        "description": "To following"
+    },
+    "follow_automatically": {
+        "message": "Do you want to follow missing members automatically?",
+        "description": "Do you want to follow missing members automatically?"
+    },
+    "confirm_unfollow": {
+        "message": "Contact __NICKNAME__ not belong to __ORG__. Do you want to unfollow?",
+        "description": "Contact __NICKNAME__ not belong to __ORG__. Do you want to unfollow?"
+    },
+    "unfollow_error": {
+        "message": "Oops! An error ocurred trying to erase __NICKNAME__",
+        "description": "Oops! An error ocurred trying to erase __NICKNAME__"
+    },
+    "unfollow_success": {
+        "message": "Contact __NICKNAME__ erased!",
+        "description": "Contact __NICKNAME__ erased"
+    },
+    "unfollow_protected": {
+        "message": "Contact __NICKNAME__ skipped because is protected",
+        "description": "Contact __NICKNAME__ skipped because is protected"
+    }
+}

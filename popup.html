@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <style>
+    .button {
+      height: calc(100% - 10px);
+      width: calc(100% - 10px);
+      border: 1px solid transparent;
+      border-image-source: url(/images/Button_border_transparent.svg);
+      border-image-slice: 24 28 fill;
+      border-image-width: 100px;
+      margin: 4px;
+      cursor: pointer;
+    }
+
+    .button:hover {
+      text-shadow: 0 0 14px #c48100, 0 0 4px #c48100;
+    }
+
+    .containerButton {
+      margin-top: 4px;
+      border: 1px solid transparent;
+      border-image-source: url(/images/Flynow_Btn_BG.svg);
+      border-image-slice: 36 36 fill;
+      border-image-width: 36px;
+      height: 34px;
+      color: #fff;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    #dataSaved {
+      text-align: center;
+      color: #33bd33;
+      font-size: 10px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .row {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+
+    .column {
+      display: flex;
+      flex-direction: column;
+      flex-basis: 100%;
+      flex: 1;
+    }
+    #container {
+      width: 360px;
+    }
+
+    .column_envelope{
+      padding: 5px;
+    }
+    .danger_button{
+      color:#f70633
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container">
+    <div class="row">
+      <div class="column column_envelope">
+        <div id="containerOrg"><strong id="orgname_label">Org Name:</strong> <input id="orgName"></input></div>
+        <div id="containerNames"><strong id="prtnickname_label">Protected Nicknames:</strong> <input id="protectedNicknames"></input></div>
+        <div id="dataSaved" class="hidden">Data saved sucessfully!</div>
+        <div id="containerSave" class="containerButton">
+          <div id="saveData" class="button">SAVE DATA</div>
+        </div>
+      </div>
+      <div class="column column_envelope">
+        <strong id="orgactions_label">ORG ACTIONS</strong>
+        <div class="containerButton">
+          <div id="addOrgMembers" class="button">ADD ORG MEMBERS</div>
+        </div>
+        <div class="containerButton">
+            <div id="eraseMembers" class="button danger_button">ERASE MEMBERS</div>
+          </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+  <script src="popup.js"></script>
+  
+</body>
+
+</html>

@@ -1,0 +1,50 @@
+{
+  "dataSaved": {
+    "message": "Datos guardados!"
+  },
+  "savedatabtn": {
+    "message": "GUARDAR"
+  },
+  "addmembersbtn": {
+    "message": "AÑADIR MIEMBROS"
+  },
+  "erasemembersbtn": {
+    "message": "BORRAR NO MM"
+  },
+  "msg_are_not_org_page": {
+    "message": "No estás en la página de tu organización. Rechazando petición."
+  },
+  "orgname_label": {
+    "message": "Nombre Organización:"
+  },
+  "prtnickname_label": {
+    "message": "Nicknames Protegidos:"
+  },
+  "orgactions_label": {
+    "message": "ACCIONES"
+  },
+  "following": {
+    "message": "Siguiendo"
+  },
+  "new_added": {
+    "message": "Añadido nuevo!"
+  },
+  "to_following": {
+    "message": "Por Seguir"
+  },
+  "follow_automatically": {
+    "message": "¿Quieres seguir a los miembros faltantes automaticamente?"
+  },
+  "confirm_unfollow": {
+    "message": "El contacto __NICKNAME__ no pertenece a __ORG__. ¿Quieres dejar de seguirlo?"
+  },
+  "unfollow_error": {
+    "message": "Oops! Ha ocurrido un error al intentar dejar de seguir a __NICKNAME__"
+  },
+  "unfollow_success": {
+    "message": "Contacto __NICKNAME__ eliminado!"
+  },
+  "unfollow_protected": {
+    "message": "Se ha saltado al contacto __NICKNAME__ porque está protegido"
+  }
+}
