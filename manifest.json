@@ -1,7 +1,7 @@
 {
     "name": "Star Citizen Easy Org",
     "version": "1.0",
-    "description": "Add in batch your org buddies or erase them easily their are not longer on your org! This is a Fan Made item. Star Citizen®, Roberts Space Industries® and Cloud Imperium ® are registered trademarks of Cloud Imperium Rights LLC",
+    "description": "Add in batch your org buddies or erase them easily their are not longer on your org!",
     "permissions": [
         "storage",
         "declarativeContent",
