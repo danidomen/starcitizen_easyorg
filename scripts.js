@@ -1,4 +1,4 @@
-function getTrltn(token){
+function getTrltn(token) {
     return (sceoi18n.hasOwnProperty(token)) ? sceoi18n[token].message : "undefined";
 }
 function addMembers(orgName) {
@@ -14,66 +14,76 @@ function addMembers(orgName) {
             var followNickName = $(this).text()
             var elementUser = $(this)
             if (followNickName && !isError) {
-                RSI.Api.Contacts.search(function (response) {
-                    if (response.data && response.data.resultset[0]) {
-                        var isNowFollowing = response.data.resultset[0].following
-                        if (isNowFollowing) {
-                            elementUser.parents('.right').append(`<div class="autotagfollowing" style="font-size: 12px;color: white;background: green;text-align: center;">${getTrltn('following')}</div>`)
-                        } else {
+                RSI.Api.Contacts.list(function (response) {
+                    if (response.data) {
+                        let isDisplayed = false;
+                        response.data.resultset.forEach(function (item) {
+                            var isNowFollowing = (item.nickname == followNickName)
+                            if (isNowFollowing) {
+                                isDisplayed = true;
+                                elementUser.parents('.right').append(`<div class="autotagfollowing" style="font-size: 12px;color: white;background: #426c97;text-align: center;">${getTrltn('following')}</div>`)
+                            }
+                        });
+                        if (!isDisplayed) {
                             if (addMembersAuto) {
-                                RSI.Api.Contacts.add(null, { nickname: followNickName })
-                                elementUser.parents('.right').append(`<div class="autotagfollowing" style="font-weight: bold;font-size: 12px;color: black;background: yellow;text-align: center;">${getTrltn('new_added')}</div>`)
+                                RSI.Api.Contacts.add(function (addResponse){
+                                    if (addResponse.code == 'OK' && addResponse.success == 1) {
+                                        elementUser.parents('.right').append(`<div class="autotagfollowing" style="font-weight: bold;font-size: 12px;color: white; background: green;text-align: center;">${getTrltn('new_added')}</div>`)
+                                    } else {
+                                        elementUser.parents('.right').append(`<div class="autotagfollowing" style="font-size: 12px;color: white;background: red;text-align: center;">${addResponse.msg}</div>`)
+                                    }
+                                }, { nickname: followNickName })
                             } else {
-                                elementUser.parents('.right').append(`<div class="autotagfollowing" style="font-size: 12px;color: white;background: red;text-align: center;">${getTrltn('to_following')}</div>`)
+                                elementUser.parents('.right').append(`<div class="autotagfollowing" style="font-size: 12px;color: black;background: yellow;text-align: center;">${getTrltn('to_following')}</div>`)
                             }
                         }
-                    }else if(response.code && response.code == 'ErrNotAuthenticated'){
-                            isError = true;
+                    } else if (response.code && response.code == 'ErrNotAuthenticated') {
+                        isError = true;
                     }
-                }, { q: followNickName })
+                }, { query: followNickName })
             }
         });
     }
 }
 
-
-function eraseMembers(orgName, protectedNicknames) {
+function eraseMembers(orgName, protectedNicknames, page = 1, maxPage = 0, cursor = '') {
     var orgToSearch = orgName.toUpperCase()
     var protected = protectedNicknames.split(',');
-    var maxPages = 0;
-    RSI.Api.Contacts.list(function (response) {
-        if (response.data && response.data.hasOwnProperty('pagecount')) {
-            maxPages = response.data.pagecount
-            for (var i = 1; i <= maxPages; i++) {
-                RSI.Api.Contacts.list(function (response) {
-                    response.data.resultset.forEach(function (item) {
-                        if(protected.indexOf(item.nickname)>=0){
-                            var alertMsg = (getTrltn('unfollow_protected')).replace('__NICKNAME__',item.nickname)
-                            alert(alertMsg);
-                        }else{
-                            RSI.Api.Org.searchMembers(function (responseOrg) {
-                                if (responseOrg.data && responseOrg.data.hasOwnProperty('rowcount') && !responseOrg.data.rowcount) {
-                                    var confirmMsg = (getTrltn('confirm_unfollow')).replace('__NICKNAME__',item.nickname).replace('__ORG__',orgToSearch)
-                                    var wantDelete = confirm(confirmMsg)
-                                    if (wantDelete) {
-                                        RSI.Api.Contacts.erase(function (responseErase) {
-                                            if (responseErase.msg == 'OK') {
-                                                var alertMsg = (getTrltn('unfollow_success')).replace('__NICKNAME__',item.nickname)
-                                                alert(alertMsg)
-                                            } else {
-                                                var alertMsg = (getTrltn('unfollow_error')).replace('__NICKNAME__',item.nickname)
-                                                alert(alertMsg)
-                                            }
-                                        }, { nickname: item.nickname })
-                                    }
+    if(page<=maxPage || maxPage == 0){
+        RSI.Api.Contacts.list(function (response) {
+            if (response.data && response.data.hasOwnProperty('pagecount')) {
+                if(maxPage == 0){
+                    maxPage = response.data.pagecount;
+                }
+                cursor = response.data.cursor;
+                response.data.resultset.forEach(function (item) {
+                    if (protected.indexOf(item.nickname) >= 0) {
+                        var alertMsg = (getTrltn('unfollow_protected')).replace('__NICKNAME__', item.nickname)
+                        alert(alertMsg);
+                    } else {
+                        RSI.Api.Org.searchMembers(function (responseOrg) {
+                            if (responseOrg.data && responseOrg.data.hasOwnProperty('rowcount') && !responseOrg.data.rowcount) {
+                                var confirmMsg = (getTrltn('confirm_unfollow')).replace('__NICKNAME__', item.nickname).replace('__ORG__', orgToSearch)
+                                var wantDelete = confirm(confirmMsg)
+                                if (wantDelete) {
+                                    RSI.Api.Contacts.erase(function (responseErase) {
+                                        if (responseErase.msg == 'OK') {
+                                            var alertMsg = (getTrltn('unfollow_success')).replace('__NICKNAME__', item.nickname)
+                                            alert(alertMsg)
+                                        } else {
+                                            var alertMsg = (getTrltn('unfollow_error')).replace('__NICKNAME__', item.nickname)
+                                            alert(alertMsg)
+                                        }
+                                    }, { nickname: item.nickname })
                                 }
-                            }, { search: item.nickname, symbol: orgToSearch })
-                        }
-                    })
-                }, { page: i })
+                            }
+                        }, { search: item.nickname, symbol: orgToSearch })
+                    }
+                });
+                eraseMembers(orgName,protectedNicknames,page+1,maxPage,cursor);
             }
-        }
-    }, { page: 1 })
+        },{ page, cursor});
+    }
 }
 
 document.addEventListener("executeAddMembers", function (msg) {
@@ -81,5 +91,5 @@ document.addEventListener("executeAddMembers", function (msg) {
 });
 
 document.addEventListener("executeEraseMembers", function (msg) {
-    eraseMembers(msg.detail.orgName,msg.detail.protectedNicknames);
+    eraseMembers(msg.detail.orgName, msg.detail.protectedNicknames);
 });
