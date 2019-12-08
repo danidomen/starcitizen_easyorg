@@ -1,48 +1,85 @@
+var orgQueriedMembers = [];
+
 function getTrltn(token) {
     return (sceoi18n.hasOwnProperty(token)) ? sceoi18n[token].message : "undefined";
 }
+
 function addMembers(orgName) {
     orgName.toUpperCase()
+    var addMembersAuto = confirm(getTrltn("follow_automatically"));
     var orgPageValue = $('.search-members input.js-form-data[name="symbol"]').val();
-    if (typeof orgPageValue == 'undefined' || !orgPageValue || orgPageValue != orgName) {
-        alert(getTrltn("msg_are_not_org_page"));
-    } else {
-        var addMembersAuto = confirm(getTrltn("follow_automatically"))
-        var isError = false;
-        $('.autotagfollowing').remove()
-        $('li.member-item span.nick').each(function (index) {
-            var followNickName = $(this).text()
-            var elementUser = $(this)
-            if (followNickName && !isError) {
-                RSI.Api.Contacts.list(function (response) {
-                    if (response.data) {
-                        let isDisplayed = false;
-                        response.data.resultset.forEach(function (item) {
-                            var isNowFollowing = (item.nickname == followNickName)
-                            if (isNowFollowing) {
-                                isDisplayed = true;
+    var isOnOrgPage = !(typeof orgPageValue == 'undefined' || !orgPageValue || orgPageValue != orgName);
+    var isError = false;
+    if (isOnOrgPage){
+        $('.autotagfollowing').remove();
+    }
+    //alert(getTrltn("msg_are_not_org_page"));
+    if (orgQueriedMembers.length == 0){
+        queryOrgMembers(orgName);
+    }
+    setTimeout(function(){
+        
+        orgQueriedMembers.forEach(function (followNickName) {
+            var elementUser = null;
+            if (isOnOrgPage){
+                elementUser = $(`li.member-item span.nick:contains(${followNickName})`)
+            }
+            RSI.Api.Contacts.list(function (response) {
+                if (response.data) {
+                    let isDisplayed = false;
+                    response.data.resultset.forEach(function (item) {
+                        var isNowFollowing = (item.nickname == followNickName)
+                        if (isNowFollowing) {
+                            isDisplayed = true;
+                            if (isOnOrgPage){
                                 elementUser.parents('.right').append(`<div class="autotagfollowing" style="font-size: 12px;color: white;background: #426c97;text-align: center;">${getTrltn('following')}</div>`)
                             }
-                        });
-                        if (!isDisplayed) {
-                            if (addMembersAuto) {
-                                RSI.Api.Contacts.add(function (addResponse){
-                                    if (addResponse.code == 'OK' && addResponse.success == 1) {
+                        }
+                    });
+                    if (!isDisplayed) {
+                        if (addMembersAuto) {
+                            RSI.Api.Contacts.add(function (addResponse){
+                                if (addResponse.code == 'OK' && addResponse.success == 1) {
+                                    if (isOnOrgPage) {
                                         elementUser.parents('.right').append(`<div class="autotagfollowing" style="font-weight: bold;font-size: 12px;color: white; background: green;text-align: center;">${getTrltn('new_added')}</div>`)
                                     } else {
-                                        elementUser.parents('.right').append(`<div class="autotagfollowing" style="font-size: 12px;color: white;background: red;text-align: center;">${addResponse.msg}</div>`)
+                                        alert(`${followNickName} ${getTrltn('new_added')}`)
                                     }
-                                }, { nickname: followNickName })
-                            } else {
+                                } else {
+                                    if (isOnOrgPage) {
+                                        elementUser.parents('.right').append(`<div class="autotagfollowing" style="font-size: 12px;color: white;background: red;text-align: center;">${addResponse.msg}</div>`)
+                                    } else {
+                                        alert(`Error ${followNickName} ${addResponse.msg}`)
+                                    }
+                                }
+                            }, { nickname: followNickName })
+                        } else {
+                            if (isOnOrgPage) {
                                 elementUser.parents('.right').append(`<div class="autotagfollowing" style="font-size: 12px;color: black;background: yellow;text-align: center;">${getTrltn('to_following')}</div>`)
                             }
                         }
-                    } else if (response.code && response.code == 'ErrNotAuthenticated') {
-                        isError = true;
                     }
-                }, { query: followNickName })
+                } else if (response.code && response.code == 'ErrNotAuthenticated') {
+                    isError = true;
+                }
+            }, { query: followNickName })
+        })
+    },5000);
+}
+
+function queryOrgMembers(orgName, page = 1, maxPage = 0, pagesize = 32, search = ''){
+    var symbol = orgName.toUpperCase()
+    if (page <= maxPage || maxPage == 0) {
+        RSI.Api.Org.getOrgMembers(function(response){
+            if (response.data && response.data.hasOwnProperty('totalrows')){
+                if (maxPage == 0){
+                    maxPage = Math.round(response.data.totalrows/pagesize)
+                }
+                let arrayMembers = Array.from(response.data.html.matchAll(/nick data[0-9]">(.*?)<\/span/gi));
+                orgQueriedMembers = [...orgQueriedMembers, ...arrayMembers.map(item => item[1])]
+                queryOrgMembers(orgName,page+1,maxPage);
             }
-        });
+        },{symbol, search, pagesize, page})
     }
 }
 
