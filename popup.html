@@ -3,6 +3,80 @@
 
 <head>
   <style>
+    @font-face {
+      font-family: "Univia Pro";
+      font-style: normal;
+      font-weight: 100;
+      src: url('/fonts/univia-pro-100.woff2') format('woff2'),
+        url('/fonts/univia-pro-100.woff') format('woff');
+    }
+
+    @font-face {
+      font-family: "Univia Pro";
+      font-style: normal;
+      font-weight: 400;
+      src: url('/fonts/univia-pro-400.woff2') format('woff2'),
+        url('/fonts/univia-pro-400.woff') format('woff');
+    }
+
+    @font-face {
+      font-family: "Univia Pro";
+      font-style: normal;
+      font-weight: 700;
+      src: url('/fonts/univia-pro-700.woff2') format('woff2'),
+        url('/fonts/univia-pro-700.woff') format('woff');
+    }
+
+    @font-face {
+      font-family: "Univia Pro";
+      font-style: normal;
+      font-weight: 800;
+      src: url('/fonts/univia-pro-800.woff2') format('woff2'),
+        url('/fonts/univia-pro-800.woff') format('woff');
+    }
+
+    @font-face {
+      font-family: "univia-pro";
+      font-style: normal;
+      font-weight: 100;
+      src: url('/fonts/univia-pro-100.woff2') format('woff2'),
+        url('/fonts/univia-pro-100.woff') format('woff');
+    }
+
+    @font-face {
+      font-family: "univia-pro";
+      font-style: normal;
+      font-weight: 400;
+      src: url('/fonts/univia-pro-400.woff2') format('woff2'),
+        url('/fonts/univia-pro-400.woff') format('woff');
+    }
+
+    @font-face {
+      font-family: "univia-pro";
+      font-style: normal;
+      font-weight: 700;
+      src: url('/fonts/univia-pro-700.woff2') format('woff2'),
+        url('/fonts/univia-pro-700.woff') format('woff');
+    }
+
+    @font-face {
+      font-family: "univia-pro";
+      font-style: normal;
+      font-weight: 800;
+      src: url('/fonts/univia-pro-800.woff2') format('woff2'),
+        url('/fonts/univia-pro-800.woff') format('woff');
+    }
+
+    body {
+      background: url(/images/Pattern_Light.png) repeat 50% 0;
+      background-size: 50px 50px;
+      -webkit-font-smoothing: antialiased;
+      -webkit-text-size-adjust: none;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+
+
     .button {
       height: calc(100% - 10px);
       width: calc(100% - 10px);
@@ -53,25 +127,86 @@
       flex-basis: 100%;
       flex: 1;
     }
+
     #container {
-      width: 360px;
+      width: 700px;
     }
 
-    .column_envelope{
+    .column_envelope {
       padding: 5px;
     }
-    .danger_button{
-      color:#f70633
+
+    .danger_button {
+      color: #f70633
+    }
+
+    ul {
+      list-style: none;
+      padding:0px;
+    }
+
+    .tab {
+      height: 345px;
+      margin-right: 24px;
+      width: 72px;
+      display: inline-block;
+      border: 1px solid transparent;
+      border-image-source: url(/images/Lore_Tab_Border.svg);
+      border-image-slice: 30 30 fill;
+      border-image-width: 30px;
+      font-family: univia-pro, sans-serif;
+      transition: all .4s cubic-bezier(.165,.84,.44,1);
+      -moz-transition: all .4s cubic-bezier(.165,.84,.44,1);
+      -webkit-transition: all .4s cubic-bezier(.165,.84,.44,1);
+      -o-transition: all .4s cubic-bezier(.165,.84,.44,1);
+    }
+
+    .title-vertical {
+      color: #fbfeff;
+      font-size: 21px;
+      width: 253px;
+      font-weight: 400;
+      text-align: right;
+      opacity: 1;
+      position: absolute;
+      -webkit-transform-origin: left top;
+      -moz-transform-origin: left top;
+      -ms-transform-origin: left top;
+      transform-origin: left top;
+      transition: opacity .5s cubic-bezier(.165, .84, .44, 1);
+      -moz-transition: opacity .5s cubic-bezier(.165, .84, .44, 1);
+      -webkit-transition: opacity .5s cubic-bezier(.165, .84, .44, 1);
+      -o-transition: opacity .5s cubic-bezier(.165, .84, .44, 1);
+      -webkit-transform: rotate(-90deg) translateX(-300px) translateY(12px);
+      -moz-transform: rotate(-90deg) translateX(-300px) translateY(12px);
+      -ms-transform: rotate(-90deg) translateX(-300px) translateY(12px);
+      transform: rotate(-90deg) translateX(-300px) translateY(12px);
+    }
+    .tab.open{
+      width: 470px;
     }
   </style>
 </head>
 
 <body>
+  <ul>
+    <li class="tab open">
+      <span class="title-vertical">CONFIGURATION</span>
+    </li>
+    <li class="tab">
+      <span class="title-vertical">ADD MEMBERS</span>
+    </li>
+    <li class="tab">
+      <span class="title-vertical">DELETE MEMBERS</span>
+    </li>
+  </ul>
   <div id="container">
+
     <div class="row">
       <div class="column column_envelope">
         <div id="containerOrg"><strong id="orgname_label">Org Name:</strong> <input id="orgName"></input></div>
-        <div id="containerNames"><strong id="prtnickname_label">Protected Nicknames:</strong> <input id="protectedNicknames"></input></div>
+        <div id="containerNames"><strong id="prtnickname_label">Protected Nicknames:</strong> <input
+            id="protectedNicknames"></input></div>
         <div id="dataSaved" class="hidden">Data saved sucessfully!</div>
         <div id="containerSave" class="containerButton">
           <div id="saveData" class="button">SAVE DATA</div>
@@ -83,14 +218,14 @@
           <div id="addOrgMembers" class="button">ADD ORG MEMBERS</div>
         </div>
         <div class="containerButton">
-            <div id="eraseMembers" class="button danger_button">ERASE MEMBERS</div>
-          </div>
+          <div id="eraseMembers" class="button danger_button">ERASE MEMBERS</div>
+        </div>
       </div>
     </div>
   </div>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
   <script src="popup.js"></script>
-  
+
 </body>
 
 </html>
