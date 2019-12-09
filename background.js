@@ -5,7 +5,7 @@
 'use strict';
 
 chrome.runtime.onInstalled.addListener(function () {
-    chrome.storage.sync.set({ starcitizenData: { "orgName": "", "protectedNicknames": "" } }, function () {
+    chrome.storage.sync.set({ starcitizenData: { "orgNames":[], "orgName": "", "protectedNicknames": "" } }, function () {
 
     });
     chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {

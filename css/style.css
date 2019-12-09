@@ -1,0 +1,213 @@
+@font-face {
+    font-family: "Univia Pro";
+    font-style: normal;
+    font-weight: 100;
+    src: url('/fonts/univia-pro-100.woff2') format('woff2'),
+      url('/fonts/univia-pro-100.woff') format('woff');
+  }
+
+  @font-face {
+    font-family: "Univia Pro";
+    font-style: normal;
+    font-weight: 400;
+    src: url('/fonts/univia-pro-400.woff2') format('woff2'),
+      url('/fonts/univia-pro-400.woff') format('woff');
+  }
+
+  @font-face {
+    font-family: "Univia Pro";
+    font-style: normal;
+    font-weight: 700;
+    src: url('/fonts/univia-pro-700.woff2') format('woff2'),
+      url('/fonts/univia-pro-700.woff') format('woff');
+  }
+
+  @font-face {
+    font-family: "Univia Pro";
+    font-style: normal;
+    font-weight: 800;
+    src: url('/fonts/univia-pro-800.woff2') format('woff2'),
+      url('/fonts/univia-pro-800.woff') format('woff');
+  }
+
+  @font-face {
+    font-family: "univia-pro";
+    font-style: normal;
+    font-weight: 100;
+    src: url('/fonts/univia-pro-100.woff2') format('woff2'),
+      url('/fonts/univia-pro-100.woff') format('woff');
+  }
+
+  @font-face {
+    font-family: "univia-pro";
+    font-style: normal;
+    font-weight: 400;
+    src: url('/fonts/univia-pro-400.woff2') format('woff2'),
+      url('/fonts/univia-pro-400.woff') format('woff');
+  }
+
+  @font-face {
+    font-family: "univia-pro";
+    font-style: normal;
+    font-weight: 700;
+    src: url('/fonts/univia-pro-700.woff2') format('woff2'),
+      url('/fonts/univia-pro-700.woff') format('woff');
+  }
+
+  @font-face {
+    font-family: "univia-pro";
+    font-style: normal;
+    font-weight: 800;
+    src: url('/fonts/univia-pro-800.woff2') format('woff2'),
+      url('/fonts/univia-pro-800.woff') format('woff');
+  }
+
+  body {
+    background: url(/images/Pattern_Light.png) repeat 50% 0;
+    background-size: 50px 50px;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: none;
+    -moz-osx-font-smoothing: grayscale;
+    width: 675px;
+  }
+
+
+
+  .button {
+    height: calc(100% - 10px);
+    width: calc(100% - 10px);
+    border: 1px solid transparent;
+    border-image-source: url(/images/Button_border_transparent.svg);
+    border-image-slice: 24 28 fill;
+    border-image-width: 100px;
+    margin: 4px;
+    cursor: pointer;
+  }
+
+  .button:hover {
+    text-shadow: 0 0 14px #c48100, 0 0 4px #c48100;
+  }
+
+  .containerButton {
+    margin-top: 4px;
+    border: 1px solid transparent;
+    border-image-source: url(/images/Flynow_Btn_BG.svg);
+    border-image-slice: 36 36 fill;
+    border-image-width: 36px;
+    height: 34px;
+    color: #fff;
+    text-align: center;
+    font-size: 16px;
+  }
+
+  #dataSaved {
+    text-align: center;
+    color: #33bd33;
+    font-size: 10px;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .column {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 100%;
+    flex: 1;
+  }
+
+  #container {
+    width: 700px;
+  }
+
+  .column_envelope {
+    padding: 5px;
+  }
+
+  .danger_button {
+    color: #f70633
+  }
+
+  ul {
+    list-style: none;
+    padding: 0px;
+  }
+
+  .tab {
+    height: 345px;
+    margin-right: 24px;
+    width: 72px;
+    display: inline-block;
+    border: 1px solid transparent;
+    border-image-source: url(/images/Lore_Tab_Border.svg);
+    border-image-slice: 30 30 fill;
+    border-image-width: 30px;
+    font-family: univia-pro, sans-serif;
+    transition: all .4s cubic-bezier(.165, .84, .44, 1);
+    -moz-transition: all .4s cubic-bezier(.165, .84, .44, 1);
+    -webkit-transition: all .4s cubic-bezier(.165, .84, .44, 1);
+    -o-transition: all .4s cubic-bezier(.165, .84, .44, 1);
+    cursor:pointer;
+  }
+
+  .title-vertical {
+    color: #fbfeff;
+    font-size: 21px;
+    width: 253px;
+    font-weight: 400;
+    text-align: right;
+    opacity: 1;
+    position: absolute;
+    -webkit-transform-origin: left top;
+    -moz-transform-origin: left top;
+    -ms-transform-origin: left top;
+    transform-origin: left top;
+    transition: opacity .5s cubic-bezier(.165, .84, .44, 1);
+    -moz-transition: opacity .5s cubic-bezier(.165, .84, .44, 1);
+    -webkit-transition: opacity .5s cubic-bezier(.165, .84, .44, 1);
+    -o-transition: opacity .5s cubic-bezier(.165, .84, .44, 1);
+    -webkit-transform: rotate(-90deg) translateX(-300px) translateY(12px);
+    -moz-transform: rotate(-90deg) translateX(-300px) translateY(12px);
+    -ms-transform: rotate(-90deg) translateX(-300px) translateY(12px);
+    transform: rotate(-90deg) translateX(-300px) translateY(12px);
+  }
+
+  .tab.open {
+    width: 470px;
+    cursor:initial;
+  }
+
+  .container {
+    padding-left: 60px;
+    padding-top: 10px;
+    float: left;
+    opacity: 0;
+    transition: all .3s cubic-bezier(.165, .84, .44, 1);
+    -moz-transition: all .3s cubic-bezier(.165, .84, .44, 1);
+    -webkit-transition: all .3s cubic-bezier(.165, .84, .44, 1);
+    -o-transition: all .3s cubic-bezier(.165, .84, .44, 1);
+    width: 400px;
+    pointer-events: none;
+  }
+
+  .tab.open .container {
+    opacity: 1;
+    -webkit-transition-delay: .3s;
+    transition-delay: .3s;
+    -webkit-transform: translateX(0);
+    -moz-transform: translateX(0);
+    -ms-transform: translateX(0);
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+  .tab:last-child {
+    margin-right: 0px;
+  }
