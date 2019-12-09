@@ -1,5 +1,4 @@
 let orgName = document.getElementById('orgName');
-let protectedNicknames = document.getElementById('protectedNicknames')
 let saveData = document.getElementById('saveData')
 let dataSaved = document.getElementById('dataSaved')
 let addOrgMembers = document.getElementById('addOrgMembers');
@@ -8,9 +7,16 @@ let tabs = document.querySelectorAll('.tab');
 let close = document.getElementsByClassName("close");
 let listInputs = document.getElementsByClassName("list-inputs");
 let addOrgBtn = document.getElementById('addOrgBtn');
+let addMemberBtn = document.getElementById('addMemberBtn');
+var orgNames = []
+var protectedNicknames = []
 
 addOrgBtn.onclick = function(){
   catchInputAddElement('orgInput','orgUL');
+}
+
+addMemberBtn.onclick = function(){
+  catchInputAddElement('memberInput','protectedUL');
 }
 
 for (i = 0; i < tabs.length; i++) {
@@ -38,6 +44,14 @@ for (i = 0; i < close.length; i++) {
   }
 }*/
 
+function setMsgLog(logId,msg,type='info'){
+  let logElement = document.getElementById(logId);
+  let logLine = document.createElement('span');
+  logLine.classList.add(type);
+  logLine.innerHTML = msg;
+  logElement.insertBefore(logLine,logElement.firstChild);
+}
+
 function catchInputAddElement(originInput,appendToUL){
   var inputValue = document.getElementById(originInput).value;
   newElementList(inputValue,appendToUL)
@@ -46,7 +60,9 @@ function catchInputAddElement(originInput,appendToUL){
 
 
 function newElementList(inputValue,appendToUL) {
-  inputValue = inputValue.toUpperCase();
+  if(appendToUL == 'orgUL'){
+    inputValue = inputValue.toUpperCase();
+  }
   var li = document.createElement("li");
   li.classList.add('list-inputs');
   var t = document.createTextNode(inputValue);
@@ -89,20 +105,31 @@ function init() {
 }
 
 chrome.storage.sync.get('starcitizenData', function (data) {
+  orgNames = data.starcitizenData.orgNames;
+  protectedNicknames = data.starcitizenData.protectedNicknames;
   data.starcitizenData.orgNames.forEach(function(element){
     newElementList(element,'orgUL');
   })
-  orgName.setAttribute('value', data.starcitizenData.orgName);
-  protectedNicknames.setAttribute('value', data.starcitizenData.protectedNicknames);
+  data.starcitizenData.protectedNicknames.forEach(function(element){
+    newElementList(element,'protectedUL');
+  })
 });
 
 saveData.onclick = function (element) {
-  var orgNames = []
+  orgNames = []
+  protectedNicknames = []
   var orgElements = document.querySelectorAll('#orgUL li');
+  var membersElements = document.querySelectorAll('#protectedUL li');
+  
   orgElements.forEach(function(element){
     orgNames.push(element.textContent.replace(/\u00D7/g,'').toUpperCase());
   })
-  chrome.storage.sync.set({ starcitizenData: { orgNames, "orgName": orgName.value, "protectedNicknames": protectedNicknames.value } }, function () {
+
+  membersElements.forEach(function(element){
+    protectedNicknames.push(element.textContent.replace(/\u00D7/g,''));
+  })
+
+  chrome.storage.sync.set({ starcitizenData: { orgNames, protectedNicknames} }, function () {
     dataSaved.classList.remove('hidden');
     setTimeout(function () {
       dataSaved.classList.add('hidden');
@@ -112,16 +139,27 @@ saveData.onclick = function (element) {
 
 addOrgMembers.onclick = function (element) {
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    chrome.tabs.sendMessage(tabs[0].id, { data: { action: "executeAddMembers", "orgName": orgName.value } }, function (response) {
-
+    chrome.tabs.sendMessage(tabs[0].id, { data: { action: "executeAddMembers", orgNames } }, function (response) {
+      
     });
   });
 }
 
 eraseMembers.onclick = function (element) {
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    chrome.tabs.sendMessage(tabs[0].id, { data: { action: "executeEraseMembers", "orgName": orgName.value, "protectedNicknames": protectedNicknames.value } }, function (response) {
+  chrome.tabs.query({ active: false, currentWindow: false }, function (tabs) {
+    chrome.tabs.sendMessage(tabs[0].id, { data: { action: "executeEraseMembers", orgNames, protectedNicknames } }, function (response) {
 
     });
   });
 }
+
+chrome.runtime.onMessageExternal.addListener(
+  function (request, sender, sendResponse) {
+      if (request.action == 'logMessage') {
+        setMsgLog(request.logId,request.msg,request.type);
+      }
+      return true;
+  }
+);
+
+

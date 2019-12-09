@@ -1,12 +1,16 @@
 var orgQueriedMembers = [];
+var editorExtensionId = "ggjgkloahjhklpaldljahpbfpmigkgga";
 
 function getTrltn(token) {
-    return (sceoi18n.hasOwnProperty(token)) ? sceoi18n[token].message : "undefined";
+    return (sceoi18n.hasOwnProperty(token)) ? sceoi18n[token].message : token;
 }
 
 function addMembers(orgName) {
-    orgName.toUpperCase()
-    var addMembersAuto = confirm(getTrltn("follow_automatically"));
+    
+    logMessage('contact-log',`${getTrltn('start_process_contacts_from')} ${orgName} ...`, 'info');
+
+    orgName = orgName.toUpperCase()
+    var addMembersAuto = true;//confirm(getTrltn("follow_automatically"));
     var orgPageValue = $('.search-members input.js-form-data[name="symbol"]').val();
     var isOnOrgPage = !(typeof orgPageValue == 'undefined' || !orgPageValue || orgPageValue != orgName);
     var isError = false;
@@ -18,7 +22,6 @@ function addMembers(orgName) {
         queryOrgMembers(orgName);
     }
     setTimeout(function(){
-        
         orgQueriedMembers.forEach(function (followNickName) {
             var elementUser = null;
             if (isOnOrgPage){
@@ -38,20 +41,19 @@ function addMembers(orgName) {
                     });
                     if (!isDisplayed) {
                         if (addMembersAuto) {
-                            RSI.Api.Contacts.add(function (addResponse){
+                            RSI.Api.Contacts.add(function (addResponse) {
                                 if (addResponse.code == 'OK' && addResponse.success == 1) {
                                     if (isOnOrgPage) {
                                         elementUser.parents('.right').append(`<div class="autotagfollowing" style="font-weight: bold;font-size: 12px;color: white; background: green;text-align: center;">${getTrltn('new_added')}</div>`)
-                                    } else {
-                                        alert(`${followNickName} ${getTrltn('new_added')}`)
                                     }
+                                    logMessage('contact-log',`${followNickName} ${getTrltn('new_added')}`,'success');
                                 } else {
                                     if (isOnOrgPage) {
                                         elementUser.parents('.right').append(`<div class="autotagfollowing" style="font-size: 12px;color: white;background: red;text-align: center;">${addResponse.msg}</div>`)
-                                    } else {
-                                        alert(`Error ${followNickName} ${addResponse.msg}`)
                                     }
+                                    logMessage('contact-log', `Error ${followNickName} ${addResponse.msg}`, 'error');
                                 }
+                                //return true;
                             }, { nickname: followNickName })
                         } else {
                             if (isOnOrgPage) {
@@ -62,8 +64,10 @@ function addMembers(orgName) {
                 } else if (response.code && response.code == 'ErrNotAuthenticated') {
                     isError = true;
                 }
+                return true;
             }, { query: followNickName })
         })
+        logMessage('contact-log', `${getTrltn('end_process_contacts_from')} ${orgName}.`, 'info');
     },5000);
 }
 
@@ -124,9 +128,16 @@ function eraseMembers(orgName, protectedNicknames, page = 1, maxPage = 0, cursor
 }
 
 document.addEventListener("executeAddMembers", function (msg) {
-    addMembers(msg.detail.orgName);
+    msg.detail.orgNames.forEach(function(orgName){
+        addMembers(orgName);
+    })
+    
 });
 
 document.addEventListener("executeEraseMembers", function (msg) {
     eraseMembers(msg.detail.orgName, msg.detail.protectedNicknames);
 });
+
+function logMessage(logId, msg, type) {
+    chrome.runtime.sendMessage(editorExtensionId, {action: 'logMessage', logId, msg, type},function(response) {});
+}
