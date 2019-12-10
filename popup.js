@@ -10,6 +10,9 @@ let addOrgBtn = document.getElementById('addOrgBtn');
 let addMemberBtn = document.getElementById('addMemberBtn');
 var orgNames = []
 var protectedNicknames = []
+var scLogs = [];
+
+setLog();
 
 addOrgBtn.onclick = function() {
     catchInputAddElement('orgInput', 'orgUL');
@@ -43,13 +46,22 @@ for (i = 0; i < close.length; i++) {
     div.remove();
   }
 }*/
+function sendExtensionId(){
+    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+        console.log('eee',chrome.runtime.id)
+        chrome.tabs.sendMessage(tabs[0].id, { data: { action: "scorgGetExtensionId", extensionId : chrome.runtime.id } }, function(response) {
+
+        });
+    });
+}
 
 function setMsgLog(logId, msg, type = 'info') {
     let logElement = document.getElementById(logId);
     let logLine = document.createElement('span');
     logLine.classList.add(type);
     logLine.innerHTML = msg;
-    logElement.insertBefore(logLine, logElement.firstChild);
+    logElement.appendChild(logLine);
+    logElement.scrollTop = logElement.scrollHeight;
 }
 
 function catchInputAddElement(originInput, appendToUL) {
@@ -90,13 +102,11 @@ function newElementList(inputValue, appendToUL) {
 
 document.addEventListener('DOMContentLoaded', function() {
     init();
-    chrome.storage.sync.get('starcitizenLogs', function(data) {
-        scLogs = data.starcitizenLogs
-        data.starcitizenLogs.forEach(function(element) {
-            setMsgLog('contact-log', element, 'info');
-        })
-    });
+    sendExtensionId();
+    
 });
+
+
 
 function setChildTextNode(elementId, text) {
     document.getElementById(elementId).innerText = text;
@@ -111,7 +121,23 @@ function init() {
       setChildTextNode('eraseMembers', chrome.i18n.getMessage("erasemembersbtn"));*/
 }
 
-var scLogs = [];
+function setLog(){
+    chrome.storage.local.get('starcitizenLogs', function(data) {
+        if (data.starcitizenLogs){
+            scLogs = data.starcitizenLogs
+            data.starcitizenLogs.forEach(function(log) {
+                setMsgLog(log.logId, log.msg, log.type);
+            })
+        }
+    });
+}
+
+function resetLog(){
+    scLogs = []
+    chrome.storage.local.set({ starcitizenLogs: scLogs });
+    document.getElementById('contact-log').innerHTML = '';
+    document.getElementById('delete-log').innerHTML = '';
+}
 
 
 
@@ -149,6 +175,7 @@ saveData.onclick = function(element) {
 };
 
 addOrgMembers.onclick = function(element) {
+    resetLog();
     chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
         chrome.tabs.sendMessage(tabs[0].id, { data: { action: "executeAddMembers", orgNames } }, function(response) {
 
@@ -157,20 +184,41 @@ addOrgMembers.onclick = function(element) {
 }
 
 eraseMembers.onclick = function(element) {
-    chrome.tabs.query({ active: false, currentWindow: false }, function(tabs) {
+    resetLog();
+    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
         chrome.tabs.sendMessage(tabs[0].id, { data: { action: "executeEraseMembers", orgNames, protectedNicknames } }, function(response) {
 
         });
     });
 }
 
+$(document).on('click','.delete-member',function(){
+    element = $(this)
+    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, { data: { action: "executeEraseMember", nickname : element.data('nickname') } }, function(response) {
+
+        });
+    });
+    $(this).remove();
+})
+
 chrome.runtime.onMessageExternal.addListener(
     function(request, sender, sendResponse) {
         if (request.action == 'logMessage') {
-            scLogs.push(request.msg);
-            chrome.storage.sync.set({ starcitizenLogs: scLogs });
+            scLogs.push(request);
+            chrome.storage.local.set({ starcitizenLogs: scLogs });
             setMsgLog(request.logId, request.msg, request.type);
         }
-        return true;
+        sendResponse('catched!');
     }
 );
+
+
+/*chrome.runtime.onConnectExternal.addListener(port => {
+    port.onMessageExternal.addListener(msg => {
+      console.log('escuchando');
+      // Handle message however you want
+    })
+});
+  
+chrome.runtime.onMessageExternal.addListener((request, sender, sendResponse) => sendResponse('pong'));*/

@@ -5,9 +5,12 @@
 'use strict';
 
 chrome.runtime.onInstalled.addListener(function() {
-    chrome.storage.sync.set({ starcitizenData: { "orgNames": [], "orgNames": [], "protectedNicknames": [], starcitizenLogs: [] } }, function() {
+    chrome.storage.sync.set({ starcitizenData: { "orgNames": [], "orgNames": [], "protectedNicknames": [] } }, function() {
 
     });
+    chrome.storage.local.set({
+        starcitizenLogs: []
+    })
     chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
         chrome.declarativeContent.onPageChanged.addRules([{
             conditions: [new chrome.declarativeContent.PageStateMatcher({

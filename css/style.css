@@ -239,3 +239,20 @@ ul {
 .log span.normal {
     color: #a5a2a2;
 }
+
+.log span.warning {
+    color: #c48100;
+}
+
+.delete-member{
+    border-radius: 8px;
+    background: green;
+    cursor: pointer;
+    font-size: 9px;
+    float: right;
+    margin-right: 20px;
+}
+
+#delete-log span.warning{
+    height: 20px;
+}
