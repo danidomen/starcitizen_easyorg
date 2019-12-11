@@ -1,5 +1,4 @@
 let orgName = document.getElementById('orgName');
-let saveData = document.getElementById('saveData')
 let dataSaved = document.getElementById('dataSaved')
 let addOrgMembers = document.getElementById('addOrgMembers');
 let eraseMembers = document.getElementById('eraseMembers');
@@ -46,19 +45,21 @@ for (i = 0; i < close.length; i++) {
     div.remove();
   }
 }*/
-function sendExtensionId(){
+function sendExtensionId() {
     chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-        console.log('eee',chrome.runtime.id)
-        chrome.tabs.sendMessage(tabs[0].id, { data: { action: "scorgGetExtensionId", extensionId : chrome.runtime.id } }, function(response) {
+        chrome.tabs.sendMessage(tabs[0].id, { data: { action: "scorgGetExtensionId", extensionId: chrome.runtime.id } }, function(response) {
 
         });
     });
 }
 
-function setMsgLog(logId, msg, type = 'info') {
+function setMsgLog(logId, msg, type = 'info', arrayPosition = false) {
     let logElement = document.getElementById(logId);
     let logLine = document.createElement('span');
     logLine.classList.add(type);
+    if (arrayPosition !== false) {
+        logLine.id = `log-${arrayPosition}`;
+    }
     logLine.innerHTML = msg;
     logElement.appendChild(logLine);
     logElement.scrollTop = logElement.scrollHeight;
@@ -72,6 +73,10 @@ function catchInputAddElement(originInput, appendToUL) {
 
 
 function newElementList(inputValue, appendToUL) {
+    if (inputValue === '') {
+        alert("You must write something!");
+        return;
+    }
     if (appendToUL == 'orgUL') {
         inputValue = inputValue.toUpperCase();
     }
@@ -79,23 +84,21 @@ function newElementList(inputValue, appendToUL) {
     li.classList.add('list-inputs');
     var t = document.createTextNode(inputValue);
     li.appendChild(t);
-    if (inputValue === '') {
-        alert("You must write something!");
-    } else {
-        document.getElementById(appendToUL).appendChild(li);
-    }
 
+    document.getElementById(appendToUL).appendChild(li);
 
     var span = document.createElement("span");
     var txt = document.createTextNode("\u00D7");
     span.className = "close";
     span.appendChild(txt);
     li.appendChild(span);
+    saveConfigData();
 
     for (i = 0; i < close.length; i++) {
         close[i].onclick = function() {
             var div = this.parentElement;
             div.remove();
+            saveConfigData();
         }
     }
 }
@@ -103,7 +106,7 @@ function newElementList(inputValue, appendToUL) {
 document.addEventListener('DOMContentLoaded', function() {
     init();
     sendExtensionId();
-    
+
 });
 
 
@@ -121,18 +124,19 @@ function init() {
       setChildTextNode('eraseMembers', chrome.i18n.getMessage("erasemembersbtn"));*/
 }
 
-function setLog(){
+function setLog() {
     chrome.storage.local.get('starcitizenLogs', function(data) {
-        if (data.starcitizenLogs){
+        if (data.starcitizenLogs) {
             scLogs = data.starcitizenLogs
-            data.starcitizenLogs.forEach(function(log) {
-                setMsgLog(log.logId, log.msg, log.type);
-            })
+            for (i = 0; i < scLogs.length; i++) {
+                var log = data.starcitizenLogs[i];
+                setMsgLog(log.logId, log.msg, log.type, i);
+            }
         }
     });
 }
 
-function resetLog(){
+function resetLog() {
     scLogs = []
     chrome.storage.local.set({ starcitizenLogs: scLogs });
     document.getElementById('contact-log').innerHTML = '';
@@ -152,7 +156,7 @@ chrome.storage.sync.get('starcitizenData', function(data) {
     })
 });
 
-saveData.onclick = function(element) {
+function saveConfigData() {
     orgNames = []
     protectedNicknames = []
     var orgElements = document.querySelectorAll('#orgUL li');
@@ -167,12 +171,9 @@ saveData.onclick = function(element) {
     })
 
     chrome.storage.sync.set({ starcitizenData: { orgNames, protectedNicknames } }, function() {
-        dataSaved.classList.remove('hidden');
-        setTimeout(function() {
-            dataSaved.classList.add('hidden');
-        }, 1400)
+
     });
-};
+}
 
 addOrgMembers.onclick = function(element) {
     resetLog();
@@ -192,14 +193,22 @@ eraseMembers.onclick = function(element) {
     });
 }
 
-$(document).on('click','.delete-member',function(){
+$(document).on('click', '.delete-member', function() {
     element = $(this)
+    var position = (element.parent().attr('id')).replace('log-', '');
+    if (position) {
+        scLogs.splice(position, 1);
+        chrome.storage.local.set({ starcitizenLogs: scLogs });
+    }
+
     chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, { data: { action: "executeEraseMember", nickname : element.data('nickname') } }, function(response) {
+        chrome.tabs.sendMessage(tabs[0].id, { data: { action: "executeEraseMember", nickname: element.data('nickname') } }, function(response) {
 
         });
     });
-    $(this).remove();
+    element.parent().remove();
+    //element.remove();
+
 })
 
 chrome.runtime.onMessageExternal.addListener(
@@ -207,7 +216,7 @@ chrome.runtime.onMessageExternal.addListener(
         if (request.action == 'logMessage') {
             scLogs.push(request);
             chrome.storage.local.set({ starcitizenLogs: scLogs });
-            setMsgLog(request.logId, request.msg, request.type);
+            setMsgLog(request.logId, request.msg, request.type, scLogs.length - 1);
         }
         sendResponse('catched!');
     }

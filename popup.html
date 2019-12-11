@@ -2,79 +2,76 @@
 <html>
 
 <head>
-  <link rel="stylesheet" type="text/css" href="css/style.css">
-  <link rel="stylesheet" type="text/css" href="css/lists.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/lists.css">
 </head>
 
 <body>
-  <ul>
-    <li class="tab open">
-      <span class="title-vertical">CONFIGURATION</span>
-      <div class="container">
-        <div class="row">
-          
-          <div class="column column_envelope lists">
-            <div>
-              <h3>My Orgs</h3>
-              <input type="text" id="orgInput" placeholder="Enter Org Name...">
-              <span id="addOrgBtn" class="addBtn">Add</span>
-            </div>
-            <ul id="orgUL" class="dynamic-ul">
-            </ul>
-          </div>
-          <div class="column column_envelope lists">
-            <div>
-              <h3>Protected Members</h3>
-              <input type="text" id="memberInput" placeholder="Enter member nickname...">
-              <span id="addMemberBtn" class="addBtn">Add</span>
-            </div>
-            <ul id="protectedUL" class="dynamic-ul">
-            </ul>
-          </div>
-          <div class="width-100">
-            <div id="dataSaved" class="hidden">Data saved sucessfully!</div>
-            <div id="containerSave" class="containerButton">
-              <div id="saveData" class="button">SAVE DATA</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-    <li class="tab">
-      <span class="title-vertical">ADD MEMBERS</span>
-      <div class="container">
-        <div class="row">
-          <div class="column column_envelope">
-            <div class="containerButton">
-              <div id="addOrgMembers" class="button">ADD ORG MEMBERS</div>
-            </div>
-            <h3 class="log-h3">Log</h3>
-            <div id="contact-log" class="log">
+    <ul>
+        <li class="tab open">
+            <span class="title-vertical">CONFIGURATION</span>
+            <div class="container">
+                <div class="row">
 
+                    <div class="column column_envelope lists">
+                        <div>
+                            <h3>My Orgs</h3>
+                            <input type="text" id="orgInput" placeholder="Enter Org Name...">
+                            <span id="addOrgBtn" class="addBtn">Add</span>
+                        </div>
+                        <ul id="orgUL" class="dynamic-ul">
+                        </ul>
+                    </div>
+                    <div class="column column_envelope lists">
+                        <div>
+                            <h3>Protected Members</h3>
+                            <input type="text" id="memberInput" placeholder="Enter member nickname...">
+                            <span id="addMemberBtn" class="addBtn">Add</span>
+                        </div>
+                        <ul id="protectedUL" class="dynamic-ul">
+                        </ul>
+                    </div>
+                    <div class="width-100">
+
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </li>
-    <li class="tab">
-      <span class="title-vertical">DELETE MEMBERS</span>
-      <div class="container">
-        <div class="row">
-          <div class="column column_envelope">
-            <div class="containerButton">
-              <div id="eraseMembers" class="button danger_button">ERASE MEMBERS</div>
+        </li>
+        <li class="tab">
+            <span class="title-vertical">ADD MEMBERS</span>
+            <div class="container">
+                <div class="row">
+                    <div class="column column_envelope">
+                        <div class="containerButton">
+                            <div id="addOrgMembers" class="button">ADD ORG MEMBERS</div>
+                        </div>
+                        <h3 class="log-h3">Log</h3>
+                        <div id="contact-log" class="log">
+
+                        </div>
+                    </div>
+                </div>
             </div>
-            <h3 class="log-h3">Log</h3>
-            <div id="delete-log" class="log">
-              
+        </li>
+        <li class="tab">
+            <span class="title-vertical">DELETE MEMBERS</span>
+            <div class="container">
+                <div class="row">
+                    <div class="column column_envelope">
+                        <div class="containerButton">
+                            <div id="eraseMembers" class="button danger_button">ERASE MEMBERS</div>
+                        </div>
+                        <h3 class="log-h3">Log</h3>
+                        <div id="delete-log" class="log">
+
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </li>
-  </ul>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-  <script src="popup.js"></script>
+        </li>
+    </ul>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script src="popup.js"></script>
 
 </body>
 

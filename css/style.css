@@ -229,11 +229,11 @@ ul {
 }
 
 .log span.error {
-    color: red;
+    color: #ff6565;
 }
 
 .log span.success {
-    color: green;
+    color: #40ef40;
 }
 
 .log span.normal {
@@ -241,18 +241,20 @@ ul {
 }
 
 .log span.warning {
-    color: #c48100;
+    color: #ffa800;
 }
 
-.delete-member{
+.delete-member {
     border-radius: 8px;
     background: green;
     cursor: pointer;
     font-size: 9px;
     float: right;
     margin-right: 20px;
+    font-weight: bold;
+    color: #fff;
 }
 
-#delete-log span.warning{
+#delete-log span.warning {
     height: 20px;
 }
