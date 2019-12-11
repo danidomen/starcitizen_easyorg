@@ -1,21 +1,19 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <link rel="stylesheet" type="text/css" href="css/lists.css">
 </head>
-
 <body>
     <ul>
         <li class="tab open">
-            <span class="title-vertical">CONFIGURATION</span>
+            <span class="title-vertical" id="title_configuration">CONFIGURATION</span>
             <div class="container">
                 <div class="row">
 
                     <div class="column column_envelope lists">
                         <div>
-                            <h3>My Orgs</h3>
+                            <h3 id="title_my_orgs">My Orgs</h3>
                             <input type="text" id="orgInput" placeholder="Enter Org Name...">
                             <span id="addOrgBtn" class="addBtn">Add</span>
                         </div>
@@ -24,8 +22,8 @@
                     </div>
                     <div class="column column_envelope lists">
                         <div>
-                            <h3>Protected Members</h3>
-                            <input type="text" id="memberInput" placeholder="Enter member nickname...">
+                            <h3 id="title_protected_members">Protected Members</h3>
+                            <input type="text" id="memberInput" placeholder="Member nickname...">
                             <span id="addMemberBtn" class="addBtn">Add</span>
                         </div>
                         <ul id="protectedUL" class="dynamic-ul">
@@ -38,7 +36,7 @@
             </div>
         </li>
         <li class="tab">
-            <span class="title-vertical">ADD MEMBERS</span>
+            <span class="title-vertical" id="title_add_members">ADD MEMBERS</span>
             <div class="container">
                 <div class="row">
                     <div class="column column_envelope">
@@ -54,7 +52,7 @@
             </div>
         </li>
         <li class="tab">
-            <span class="title-vertical">DELETE MEMBERS</span>
+            <span class="title-vertical" id="title_delete_members">DELETE MEMBERS</span>
             <div class="container">
                 <div class="row">
                     <div class="column column_envelope">
@@ -72,7 +70,5 @@
     </ul>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <script src="popup.js"></script>
-
 </body>
-
 </html>

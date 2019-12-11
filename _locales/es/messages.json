@@ -6,7 +6,7 @@
     "message": "GUARDAR"
   },
   "addmembersbtn": {
-    "message": "AÑADIR MIEMBROS"
+    "message": "AÑADIR CONTACTOS"
   },
   "erasemembersbtn": {
     "message": "BORRAR NO MM"
@@ -33,7 +33,7 @@
     "message": "Por Seguir"
   },
   "follow_automatically": {
-    "message": "¿Quieres seguir a los miembros faltantes automaticamente?"
+    "message": "¿Quieres seguir a los contactos faltantes automaticamente?"
   },
   "confirm_unfollow": {
     "message": "El contacto __NICKNAME__ no pertenece a __ORG__. ¿Quieres dejar de seguirlo?"
@@ -46,5 +46,77 @@
   },
   "unfollow_protected": {
     "message": "Se ha saltado al contacto __NICKNAME__ porque está protegido"
+  },
+  "start_delete_process": {
+    "message": "Comenzando proceso de comprobación contactos a eliminar"
+  },
+  "it_not_belongs_your_orgs": {
+    "message": "no pertenece a tus organizaciones"
+  },
+  "do_you_want_unfollow": {
+    "message": "¿Deseas dejar de seguirlo?"
+  },
+  "yes": {
+    "message": "SI"
+  },
+  "end_delete_process": {
+    "message": "Fin del proceso"
+  },
+  "error_may_not_authenticated": {
+    "message": "Error. ¿Has iniciado sesión?"
+  },
+  "getting_batch_members_from": {
+    "message": "Sacar contactos en bloque de"
+  },
+  "page_number": {
+    "message": "Página"
+  },
+  "start_query_contacts_from": {
+    "message": "Comenzando a consultar contactos de"
+  },
+  "already_following_yet": {
+    "message": "actualmente siguiendo ya"
+  },
+  "ErrCannotAddItself": {
+    "message": "No puedes añadirte a ti"
+  },
+  "error_not_set_any_org": {
+    "message": "No has configurado ninguna ORG"
+  },
+  "end_process_contacts_from": {
+    "message": "Finalización del proceso de contactos de"
+  },
+  "title_add_members": {
+    "message": "AÑADIR CONTACTOS"
+  },
+  "addOrgMembers": {
+    "message": "AÑADIR CONTACTOS FALTANTES"
+  },
+  "title_delete_members": {
+    "message": "DEJAR DE SEGUIR"
+  },
+  "eraseMembers": {
+    "message": "CONSULTAR DEJAR DE SEGUIR"
+  },
+  "addOrgBtn": {
+    "message": "Añadir"
+  },
+  "addMemberBtn": {
+    "message": "Añadir"
+  },
+  "memberInput": {
+    "message": "Contacto nickname..."
+  },
+  "orgInput": {
+    "message": "ID Organización..."
+  },
+  "title_configuration": {
+    "message": "CONFIGURACION"
+  },
+  "title_my_orgs": {
+    "message": "Mis Organizaciones"
+  },
+  "title_protected_members": {
+    "message": "Contactos Protegidos"
   }
 }
