@@ -58,5 +58,101 @@
     "unfollow_protected": {
         "message": "Contact __NICKNAME__ skipped because is protected",
         "description": "Contact __NICKNAME__ skipped because is protected"
+    },
+    "start_delete_process": {
+        "message": "Start delete process",
+        "description": "Start delete process"
+    },
+    "it_not_belongs_your_orgs": {
+        "message": "it not belongs to your orgs",
+        "description": "it not belongs to your orgs"
+    },
+    "do_you_want_unfollow": {
+        "message": "Do you want to unfollow?",
+        "description": "Do you want to unfollow?"
+    },
+    "yes": {
+        "message": "YES",
+        "description": "YES"
+    },
+    "end_delete_process": {
+        "message": "End delete process",
+        "description": "End delete process"
+    },
+    "error_may_not_authenticated": {
+        "message": "Error, are you authenticated?",
+        "description": "Error, are you authenticated?"
+    },
+    "getting_batch_members_from": {
+        "message": "Getting batch members from",
+        "description": "Getting batch members from"
+    },
+    "page_number": {
+        "message": "Page number",
+        "description": "Page number"
+    },
+    "start_query_contacts_from": {
+        "message": "Start query contacts from",
+        "description": "Start query contacts from"
+    },
+    "already_following_yet": {
+        "message": "already following yet",
+        "description": "already following yet"
+    },
+    "ErrCannotAddItself": {
+        "message": "You cannot add yourself",
+        "description": "You cannot add yourself"
+    },
+    "error_not_set_any_org": {
+        "message": "Error, not any org setted",
+        "description": "Error, not any org setted"
+    },
+    "end_process_contacts_from": {
+        "message": "End processing contacts from",
+        "description": "End processing contacts from"
+    },
+    "title_add_members": {
+        "message": "ADD MEMBERS",
+        "description": "ADD MEMBERS"
+    },
+    "addOrgMembers": {
+        "message": "ADD ORG MEMBERS",
+        "description": "ADD ORG MEMBERS"
+    },
+    "title_delete_members": {
+        "message": "UNFOLLOW MEMBERS",
+        "description": "UNFOLLOW MEMBERS"
+    },
+    "eraseMembers": {
+        "message": "CHECK MEMBERS TO UNFOLLOW",
+        "description": "CHECK MEMBERS TO UNFOLLOW"
+    },
+    "addOrgBtn": {
+        "message": "Add",
+        "description": "Add"
+    },
+    "addMemberBtn": {
+        "message": "Add",
+        "description": "Add"
+    },
+    "memberInput": {
+        "message": "Member nickname...",
+        "description": "Member nickname..."
+    },
+    "orgInput": {
+        "message": "Org Name Id...",
+        "description": "Org Name Id..."
+    },
+    "title_configuration": {
+        "message": "CONFIGURATION",
+        "description": "CONFIGURATION"
+    },
+    "title_my_orgs": {
+        "message": "My Orgs",
+        "description": "My Orgs"
+    },
+    "title_protected_members": {
+        "message": "Protected Members",
+        "description": "Protected Members"
     }
 }
