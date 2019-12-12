@@ -149,7 +149,7 @@ function queryOrgMembers(orgName,type, page = 1, maxPage = 0, pagesize = 32, sea
                 }
                 let arrayMembers = Array.from(response.data.html.matchAll(/nick data[0-9]">(.*?)<\/span/gi));
                 orgQueriedMembers[symbol] = [...orgQueriedMembers[symbol], ...arrayMembers.map(item => item[1])]
-                queryOrgMembers(orgName, page + 1, maxPage);
+                queryOrgMembers(orgName,type,page + 1, maxPage);
             }
         }, { symbol, search, pagesize, page })
     }
@@ -243,10 +243,9 @@ document.addEventListener("executeEraseMembers", function(msg) {
             clearInterval(intervalEndProcess);
             processedToDelete = 0;
             let difference = contactList.filter(x => !inYourOrgs.includes(x));
-            console.log(difference);
             for (i = 0; i < difference.length; i++) {
                 var nickname = difference[i];
-                var confirmMsg = `<strong>${nickname}</strong> ${getTrltn('it_not_belongs_your_orgs')}. ${getTrltn('do_you_want_unfollow')} <button class="delete-member" data-nickname="${nickname}">${getTrltn('yes')}</button>`;
+                var confirmMsg = `<div><strong>${nickname}</strong> ${getTrltn('it_not_belongs_your_orgs')}. ${getTrltn('do_you_want_unfollow')}</div><button class="delete-member" data-nickname="${nickname}">${getTrltn('yes')}</button>`;
                 logMessage('delete-log', confirmMsg, 'warning');
             }
             logMessage('delete-log', getTrltn('end_delete_process'), 'info');
