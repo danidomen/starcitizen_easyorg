@@ -5,18 +5,16 @@ let eraseMembers = document.getElementById('eraseMembers');
 let tabs = document.querySelectorAll('.tab');
 let close = document.getElementsByClassName("close");
 let listInputs = document.getElementsByClassName("list-inputs");
-let addOrgBtn = document.getElementById('addOrgBtn');
+//let addOrgBtn = document.getElementById('addOrgBtn');
 let addMemberBtn = document.getElementById('addMemberBtn');
 var orgNames = []
 var protectedNicknames = []
 var scLogs = [];
+var userOrgs = {};
 
 
 
 function init(){
-    addOrgBtn.onclick = function() {
-        catchInputAddElement('orgInput', 'orgUL');
-    }
     
     addMemberBtn.onclick = function() {
         catchInputAddElement('memberInput', 'protectedUL');
@@ -59,17 +57,23 @@ function catchInputAddElement(originInput, appendToUL) {
 }
 
 
-function newElementList(inputValue, appendToUL) {
+function newElementList(inputValue, appendToUL, image) {
     if (inputValue === '') {
         alert("You must write something!");
         return;
     }
-    if (appendToUL == 'orgUL') {
-        inputValue = inputValue.toUpperCase();
-    }
+    
     var li = document.createElement("li");
     li.classList.add('list-inputs');
     var t = document.createTextNode(inputValue);
+    if (appendToUL == 'orgUL') {
+        li.classList.add('list-orgs');
+        var imageElement = document.createElement('img');
+        imageElement.src = image;
+        imageElement.width = 24;
+        imageElement.height = 24;
+        li.appendChild(imageElement);
+    }
     li.appendChild(t);
 
     document.getElementById(appendToUL).appendChild(li);
@@ -78,7 +82,9 @@ function newElementList(inputValue, appendToUL) {
     var txt = document.createTextNode("\u00D7");
     span.className = "close";
     span.appendChild(txt);
-    li.appendChild(span);
+    if(appendToUL != 'orgUL'){
+        li.appendChild(span);
+    }
     saveConfigData();
 
     for (i = 0; i < close.length; i++) {
@@ -105,11 +111,11 @@ function setChildTextNode(elementId, text) {
 
 function initTranslations() {
     var translatableIds = ['title_add_members','addOrgMembers','title_delete_members',
-    'eraseMembers','addOrgBtn','addMemberBtn','title_configuration','title_my_orgs','title_protected_members']
+    'eraseMembers','addMemberBtn','title_configuration','title_my_orgs','title_protected_members']
     translatableIds.forEach(function(token){
         setChildTextNode(token, chrome.i18n.getMessage(token));
     })
-    var translatablePlaceholders = ['memberInput','orgInput']
+    var translatablePlaceholders = ['memberInput']
     translatablePlaceholders.forEach(function(token){
         document.getElementById(token).placeholder = chrome.i18n.getMessage(token);
     })
@@ -204,7 +210,7 @@ $(document).on('click', '.delete-member', function() {
     }
 
     chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, { data: { action: "executeEraseMember", nickname: element.data('nickname') } }, function(response) {
+        chrome.tabs.sendMessage(tabs[0].id, { data: { action: "executeEraseMember", nickname: element.data('nickname'), userid:  element.data('userid')} }, function(response) {
 
         });
     });
@@ -216,9 +222,17 @@ $(document).on('click', '.delete-member', function() {
 chrome.runtime.onMessageExternal.addListener(
     function(request, sender, sendResponse) {
         if (request.action == 'logMessage') {
-            scLogs.push(request);
-            chrome.storage.local.set({ starcitizenLogs: scLogs });
-            setMsgLog(request.logId, request.msg, request.type, scLogs.length - 1);
+            if(request.type == 'object' && request.logId == 'communities'){
+                userOrgs = JSON.parse(request.msg);
+                $('li.list-orgs').remove();
+                for(var orgName in userOrgs){
+                    newElementList(orgName, 'orgUL',userOrgs[orgName].avatar);
+                }
+            }else{
+                scLogs.push(request);
+                chrome.storage.local.set({ starcitizenLogs: scLogs });
+                setMsgLog(request.logId, request.msg, request.type, scLogs.length - 1);
+            }
         }
         sendResponse('catched!');
     }

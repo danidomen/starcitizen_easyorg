@@ -114,3 +114,12 @@
 .addBtn:hover {
     background-color: #bbb;
 }
+
+li.list-inputs.list-orgs {
+    padding: 5px;
+}
+
+li.list-inputs.list-orgs img {
+    vertical-align: middle;
+    margin-right: 10px;
+}
