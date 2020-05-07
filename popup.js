@@ -1,6 +1,7 @@
 let orgName = document.getElementById('orgName');
 let dataSaved = document.getElementById('dataSaved')
 let addOrgMembers = document.getElementById('addOrgMembers');
+let buttonsOrgMembers = document.getElementById('buttonsOrgMembers');
 let eraseMembers = document.getElementById('eraseMembers');
 let tabs = document.querySelectorAll('.tab');
 let close = document.getElementsByClassName("close");
@@ -110,7 +111,7 @@ function setChildTextNode(elementId, text) {
 }
 
 function initTranslations() {
-    var translatableIds = ['title_add_members','addOrgMembers','title_delete_members',
+    var translatableIds = ['title_add_members','buttonsOrgMembers','addOrgMembers','title_delete_members',
     'eraseMembers','addMemberBtn','title_configuration','title_my_orgs','title_protected_members']
     translatableIds.forEach(function(token){
         setChildTextNode(token, chrome.i18n.getMessage(token));
@@ -170,6 +171,26 @@ function saveConfigData() {
     chrome.storage.sync.set({ starcitizenData: { orgNames, protectedNicknames } }, function() {
 
     });
+}
+
+buttonsOrgMembers.onclick = function(element) {
+    if(orgNames.length == 0){
+        var logmsg = {
+            logId:'contact-log',
+            msg: chrome.i18n.getMessage("error_not_set_any_org"),
+            type: 'error'
+        }
+        scLogs.push(logmsg);
+        chrome.storage.local.set({ starcitizenLogs: scLogs });
+        setMsgLog(logmsg.logId, logmsg.msg, logmsg.type, scLogs.length - 1);
+    } else {
+        resetLog();
+        chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, { data: { action: "executeButtonsMembers", orgNames } }, function(response) {
+
+            });
+        });
+    }
 }
 
 addOrgMembers.onclick = function(element) {

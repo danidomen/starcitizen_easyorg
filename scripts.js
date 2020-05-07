@@ -3,6 +3,7 @@ var SCorgExtensionId = "";
 var contactOnMyList = -1;
 var membersPerOrg = {};
 var contactList = [];
+var pendingList = [];
 var inYourOrgs = [];
 var processedToDelete = 0;
 var isError = false;
@@ -72,10 +73,23 @@ function getOrganizations(){
                 if(community.id > 1){
                     userOrgs[community.name] = {
                         id : community.id,
-                        avatar : community.avatar
+                        avatar : community.avatar,
+                        slug: community.slug
                     }
                 }
             });
+            response.data.friend_requests.forEach(fReq => {
+                if(fReq.hasOwnProperty('members') && fReq.members.length && fReq.members[0].hasOwnProperty('id')){
+                    var fMem = fReq.members[0];
+                    pendingList[fMem.nickname] = {
+                        id : fMem.id,
+                        displayname : fMem.displayname,
+                        nickname: fMem.nickname,
+                        request_id: fReq.id,
+                        requesting_member_id: fReq.requesting_member_id
+                    }
+                }
+            })
             logMessage('communities', JSON.stringify(userOrgs), 'object');
         } else if (response.code && response.code == 'ErrNotAuthenticated') {
             userOrgs = {};
@@ -84,14 +98,35 @@ function getOrganizations(){
     });
 }
 
-function addMembersPerOrg(orgName) {
+function addContact(memberId, followNickName,isOnOrgPage){
+    var elementUser = null;
+    if (isOnOrgPage) {
+        elementUser = $(`li.member-item span.nick:contains(${followNickName})`)
+    }
+    callToAPI(ENDPOINT_REQUEST,'{"member_id": "'+memberId+'"}',function(addResponse){
+        addResponse = JSON.parse(addResponse);
+        if (addResponse.code == 'OK' && addResponse.success == 1) {
+            logMessage('contact-log', `<strong>${followNickName}</strong> ${getTrltn('new_added')}`, 'success');
+            if (isOnOrgPage) {
+                elementUser.parents('.right').append(`<div class="autotagfollowing" style="font-weight: bold;font-size: 12px;color: white; background: green;text-align: center;">${getTrltn('new_added')}</div>`)
+            }
+        } else {
+            logMessage('contact-log', `Error <strong>${followNickName}</strong> ${getTrltn(addResponse.msg)}`, 'error');
+            if (isOnOrgPage) {
+                elementUser.parents('.right').append(`<div class="autotagfollowing" style="font-size: 12px;color: white;background: red;text-align: center;">${getTrltn(addResponse.msg)}</div>`)
+            } 
+        }
+    })
+}
+
+function addMembersPerOrg(orgName,onlyButton=false) {
     //orgName = orgName.toUpperCase()
     var addMembersAuto = true; //confirm(getTrltn("follow_automatically"));
     var orgPageValue = '';
     if(window.jQuery){
         orgPageValue = $('.search-members input.js-form-data[name="symbol"]').val();
     }
-    var isOnOrgPage = !(typeof orgPageValue == 'undefined' || !orgPageValue || orgPageValue != orgName.toUpperCase());
+    var isOnOrgPage = !(typeof orgPageValue == 'undefined' || !orgPageValue || userOrgs[orgName].slug != orgPageValue);
     if (isOnOrgPage) {
         $('.autotagfollowing').remove();
     }
@@ -111,7 +146,7 @@ function addMembersPerOrg(orgName) {
         if (isOnOrgPage) {
             elementUser = $(`li.member-item span.nick:contains(${followNickName})`)
         }
-        if (!contactList.hasOwnProperty(followNickName)) {
+        if (!contactList.hasOwnProperty(followNickName) && !pendingList.hasOwnProperty(followNickName)) {
             //CONTACT NOT EXISTS. ADD TO FRIEND LIST
             for(var myorgName in userOrgs){
                 callToAPI(ENDPOINT_SEARCH,'{"community_id":'+userOrgs[myorgName].id+',"text":"'+followNickName+'","ignore_self":true}',function(searchResponse){
@@ -119,31 +154,33 @@ function addMembersPerOrg(orgName) {
                     searchResponse = JSON.parse(searchResponse);
                     if (searchResponse.code == 'OK' && searchResponse.success == 1 && searchResponse.data.hits.total == 1) {
                         var memberId =  searchResponse.data.members[0].id;
-                        callToAPI(ENDPOINT_REQUEST,'{"member_id": "'+memberId+'"}',function(addResponse){
-                            addResponse = JSON.parse(addResponse);
-                            if (addResponse.code == 'OK' && addResponse.success == 1) {
-                                logMessage('contact-log', `<strong>${followNickName}</strong> ${getTrltn('new_added')}`, 'success');
-                                if (isOnOrgPage) {
-                                    elementUser.parents('.right').append(`<div class="autotagfollowing" style="font-weight: bold;font-size: 12px;color: white; background: green;text-align: center;">${getTrltn('new_added')}</div>`)
-                                }
-                            } else {
-                                logMessage('contact-log', `Error <strong>${followNickName}</strong> ${getTrltn(addResponse.msg)}`, 'error');
-                                if (isOnOrgPage) {
-                                    elementUser.parents('.right').append(`<div class="autotagfollowing" style="font-size: 12px;color: white;background: red;text-align: center;">${getTrltn(addResponse.msg)}</div>`)
-                                } 
-                            }
-                        })
+                        if(onlyButton && isOnOrgPage){
+                            elementUser.parents('.right').append(`<div class="autotagfollowing followbutton" data-nickname="${followNickName}" data-memberid="${memberId}" style="font-weight: bold;font-size: 12px;color: white; background: #899947;text-align: center;">${getTrltn('to_following')}</div>`)
+                        }else{
+                            addContact(memberId,followNickName,isOnOrgPage)
+                        }
                     } else {
                         logMessage('contact-log', `Error <strong>${followNickName}</strong> ${getTrltn(searchResponse.msg)} ${getTrltn('or_maybe_not_found_in_org')} ${myorgName}`, 'error');
                     }
                 })
             }
-        } else {
+        } else if (contactList.hasOwnProperty(followNickName)) {
             //CONTACT IS ALREADY A FRIEND
             counter++;
-            logMessage('contact-log', `<strong>${followNickName}</strong> ${getTrltn('already_following_yet')}`, 'normal');
+            if(!onlyButton){
+                logMessage('contact-log', `<strong>${followNickName}</strong> ${getTrltn('already_following_yet')}`, 'normal');
+            }
             if (isOnOrgPage) {
                 elementUser.parents('.right').append(`<div class="autotagfollowing" style="font-size: 12px;color: white;background: #426c97;text-align: center;">${getTrltn('following')}</div>`)
+            }
+        } else if (pendingList.hasOwnProperty(followNickName)){
+            //PENDING
+            counter++;
+            if(!onlyButton){
+                logMessage('contact-log', `<strong>${followNickName}</strong> ${getTrltn('pending_request')}`, 'normal');
+            }
+            if (isOnOrgPage) {
+                elementUser.parents('.right').append(`<div class="autotagfollowing" style="font-size: 12px;color: white;background: #636a72;text-align: center;">${getTrltn('pending')}</div>`)
             }
         }
     });
@@ -164,7 +201,7 @@ function startProcessing(orgNames, type, protectedNicknames = null){
 }
 
 function processMembers(orgName, type, protectedNicknames = null) {
-    if (type == 'add') {
+    if (type == 'add' || type == 'buttons') {
         logMessage('contact-log', `${getTrltn('start_query_contacts_from')} <strong>${orgName}</strong> ...`, 'info');
     } else if (type == 'delete') {
         logMessage('delete-log', `${getTrltn('start_query_contacts_from')} <strong>${orgName}</strong> ...`, 'info');
@@ -184,7 +221,7 @@ function processMembers(orgName, type, protectedNicknames = null) {
 function queryOrgMembers(orgName,type, page = 1, maxPage = 0, pagesize = 100, search = '') {
     var symbol = orgName;
     if (page <= maxPage || maxPage == 0) {
-        if (type == 'add') {
+        if (type == 'add' || type == 'buttons') {
             logMessage('contact-log', `${getTrltn('getting_batch_members_from')} <strong>${orgName}</strong> - ${getTrltn('page_number')} ${page}...`, 'info');
         } else if (type == 'delete') {
             logMessage('delete-log', `${getTrltn('getting_batch_members_from')} <strong>${orgName}</strong> - ${getTrltn('page_number')} ${page}...`, 'info');
@@ -208,8 +245,8 @@ function queryOrgMembers(orgName,type, page = 1, maxPage = 0, pagesize = 100, se
     }else{
         if ((membersPerOrg.hasOwnProperty(orgName) &&
             orgQueriedMembers[orgName].length >= membersPerOrg[orgName]) || orgName == 'NO ORG DETECTED') {
-            if (type == 'add') {
-                addMembersPerOrg(orgName);
+            if (type == 'add' || type == 'buttons') {
+                addMembersPerOrg(orgName, ((type == 'buttons')?true:false));
             } else if (type == 'delete') {
                 eraseMembers(orgName, protectedNicknames);
             }
@@ -295,6 +332,20 @@ document.addEventListener("executeAddMembers", function(msg) {
     }
 });
 
+document.addEventListener("executeButtonsMembers", function(msg) {
+    if (isError) {
+        logMessage('contact-log', getTrltn('error_may_not_authenticated'), 'error');
+        logMessage('delete-log', getTrltn('error_may_not_authenticated'), 'error');
+    } else {
+        orgQueriedMembers = {};
+        var orgTmpNames = [];
+        for(var orgName in userOrgs){
+            orgTmpNames.push(orgName);
+        }
+        startProcessing(orgTmpNames,'buttons');
+    }
+});
+
 document.addEventListener("executeEraseMember", function(msg) {
     callToAPI(ENDPOINT_REMOVE,'{"member_id": "'+msg.detail.userid+'"}',function(responseErase){
         responseErase = JSON.parse(responseErase);
@@ -325,3 +376,13 @@ document.addEventListener("executeEraseMembers", function(msg) {
     startProcessing(orgNamesErase, 'delete', protectedNicknames);
     return;
 });
+if(window.jQuery){
+    $('body').on('click','.followbutton',function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        var memberId = $(this).data('memberid');
+        var followNick = $(this).data('nickname');
+        $(this).remove();
+        addContact(memberId,followNick,true);
+    })
+}

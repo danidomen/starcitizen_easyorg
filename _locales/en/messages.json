@@ -99,6 +99,14 @@
         "message": "already following yet",
         "description": "already following yet"
     },
+    "pending_request": {
+        "message": "pending request",
+        "description": "pending request"
+    },
+    "pending": {
+        "message": "Pending",
+        "description": "Pending"
+    },
     "ErrCannotAddItself": {
         "message": "You cannot add yourself",
         "description": "You cannot add yourself"
@@ -118,6 +126,10 @@
     "addOrgMembers": {
         "message": "ADD ORG MEMBERS",
         "description": "ADD ORG MEMBERS"
+    },
+    "buttonsOrgMembers": {
+        "message": "DISPLAY BUTTONS IN ORG PAGE",
+        "description": "DISPLAY BUTTONS IN ORG PAGE"
     },
     "title_delete_members": {
         "message": "UNFOLLOW MEMBERS",

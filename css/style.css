@@ -90,6 +90,10 @@ body {
     font-size: 16px;
 }
 
+.buttonsOrg{
+    width: 100%;
+}
+
 #dataSaved {
     text-align: center;
     color: #33bd33;

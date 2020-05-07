@@ -77,6 +77,12 @@
   "already_following_yet": {
     "message": "actualmente siguiendo ya"
   },
+  "pending_request": {
+    "message": "petición pendiente"
+  },
+  "pending": {
+      "message": "Pendiente"
+  },
   "ErrCannotAddItself": {
     "message": "No puedes añadirte a ti"
   },
@@ -91,6 +97,9 @@
   },
   "addOrgMembers": {
     "message": "AÑADIR CONTACTOS FALTANTES"
+  },
+  "buttonsOrgMembers": {
+    "message": "MOSTRAR BOTONES EN ORG"
   },
   "title_delete_members": {
     "message": "DEJAR DE SEGUIR"
