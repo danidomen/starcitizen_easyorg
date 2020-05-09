@@ -119,6 +119,32 @@ function addContact(memberId, followNickName,isOnOrgPage){
     })
 }
 
+function setButtonsOnOrgSearchMemeberPage(orgName,searchText){
+    callToAPI(ENDPOINT_SEARCH,'{"community_id":'+userOrgs[orgName].id+',"text":"'+searchText+'","ignore_self":true}',function(searchResponse){
+        searchResponse = JSON.parse(searchResponse);
+        if (searchResponse.code == 'OK' && searchResponse.success == 1 && searchResponse.data.hits.total > 0) {
+            searchResponse.data.members.forEach(function(member){
+                var elementUser = $(`li.member-item span.nick:contains(${member.nickname})`)
+                if (!contactList.hasOwnProperty(member.nickname) && !pendingList.hasOwnProperty(member.nickname)) {
+                    elementUser.parents('.right').append(`<div class="autotagfollowing followbutton" data-nickname="${member.nickname}" data-memberid="${member.id}" style="font-weight: bold;font-size: 12px;color: white; background: #899947;text-align: center;">${getTrltn('to_following')}</div>`);
+                } else if (contactList.hasOwnProperty(member.nickname)) {
+                    elementUser.parents('.right').append(`<div class="autotagfollowing" style="font-size: 12px;color: white;background: #426c97;text-align: center;">${getTrltn('following')}</div>`);
+                } else if (pendingList.hasOwnProperty(member.nickname)){
+                    elementUser.parents('.right').append(`<div class="autotagfollowing" style="font-size: 12px;color: white;background: #636a72;text-align: center;">${getTrltn('pending')}</div>`);
+                }
+            });
+            $('.member-item.js-member-item').not(':has(.autotagfollowing)').each(function(){
+                $(this).find('span.right').append(`<div class="autotagfollowing" style="font-size: 12px;color: white;background: red;text-align: center;"><a style="font-weight: bold;color: white;" target="_blank" href="/community/issue-council/star-citizen-alpha-3/STARC-112651">IC STARC-112651</a></div>`);
+            });
+        }else{
+            $('.member-item.js-member-item').not(':has(.autotagfollowing)').each(function(){
+                $(this).find('span.right').append(`<div class="autotagfollowing" style="font-size: 12px;color: white;background: red;text-align: center;">${getTrltn('not_found')}</div>`);
+            });
+        }
+    });
+    
+}
+
 function addMembersPerOrg(orgName,onlyButton=false) {
     //orgName = orgName.toUpperCase()
     var addMembersAuto = true; //confirm(getTrltn("follow_automatically"));
@@ -185,6 +211,7 @@ function addMembersPerOrg(orgName,onlyButton=false) {
         }
     });
 }
+
 var contactListFilter = [];
 function startProcessing(orgNames, type, protectedNicknames = null){
     contactListFilter = [];
@@ -201,27 +228,44 @@ function startProcessing(orgNames, type, protectedNicknames = null){
 }
 
 function processMembers(orgName, type, protectedNicknames = null) {
-    if (type == 'add' || type == 'buttons') {
-        logMessage('contact-log', `${getTrltn('start_query_contacts_from')} <strong>${orgName}</strong> ...`, 'info');
-    } else if (type == 'delete') {
-        logMessage('delete-log', `${getTrltn('start_query_contacts_from')} <strong>${orgName}</strong> ...`, 'info');
-    }
+    if (type != 'buttons'){
+        if (type == 'add') {
+            logMessage('contact-log', `${getTrltn('start_query_contacts_from')} <strong>${orgName}</strong> ...`, 'info');
+        } else if (type == 'delete') {
+            logMessage('delete-log', `${getTrltn('start_query_contacts_from')} <strong>${orgName}</strong> ...`, 'info');
+        }
+
+        if (!orgQueriedMembers.hasOwnProperty(orgName)) {
+            orgQueriedMembers[orgName] = [];
+        }
     
-
-
-    if (!orgQueriedMembers.hasOwnProperty(orgName)) {
-        orgQueriedMembers[orgName] = [];
-    }
-
-    if (orgQueriedMembers[orgName].length == 0) {
-        queryOrgMembers(orgName,type);
+        if (orgQueriedMembers[orgName].length == 0) {
+            queryOrgMembers(orgName,type);
+        }
+    } else {
+        var orgPageValue = '';
+        if(window.jQuery){
+            orgPageValue = $('.search-members input.js-form-data[name="symbol"]').val();
+        }
+        var isOnOrgPage = !(typeof orgPageValue == 'undefined' || !orgPageValue || userOrgs[orgName].slug != orgPageValue);
+        if (isOnOrgPage) {
+            $('.autotagfollowing').remove();
+            var searchText = $('.search-members input.js-form-data[name="search"]').val()
+            if (searchText.length < 3){
+                logMessage('contact-log', `Error <strong>${orgName}</strong> ${getTrltn('must_refine_search_more_than_3_chars')}`, 'error');
+            } else {
+                setButtonsOnOrgSearchMemeberPage(orgName,searchText);
+            }
+        }else{
+            logMessage('contact-log', `Error <strong>${orgName}</strong> ${getTrltn('you_must_go_to_your_org_members_page_and_search')}`, 'error');
+        }
     }
 }
 
 function queryOrgMembers(orgName,type, page = 1, maxPage = 0, pagesize = 100, search = '') {
     var symbol = orgName;
     if (page <= maxPage || maxPage == 0) {
-        if (type == 'add' || type == 'buttons') {
+        if (type == 'add') {
             logMessage('contact-log', `${getTrltn('getting_batch_members_from')} <strong>${orgName}</strong> - ${getTrltn('page_number')} ${page}...`, 'info');
         } else if (type == 'delete') {
             logMessage('delete-log', `${getTrltn('getting_batch_members_from')} <strong>${orgName}</strong> - ${getTrltn('page_number')} ${page}...`, 'info');
@@ -243,10 +287,9 @@ function queryOrgMembers(orgName,type, page = 1, maxPage = 0, pagesize = 100, se
             }
         })
     }else{
-        if ((membersPerOrg.hasOwnProperty(orgName) &&
-            orgQueriedMembers[orgName].length >= membersPerOrg[orgName]) || orgName == 'NO ORG DETECTED') {
-            if (type == 'add' || type == 'buttons') {
-                addMembersPerOrg(orgName, ((type == 'buttons')?true:false));
+        if (membersPerOrg.hasOwnProperty(orgName) || orgName == 'NO ORG DETECTED') {
+            if (type == 'add') {
+                addMembersPerOrg(orgName);
             } else if (type == 'delete') {
                 eraseMembers(orgName, protectedNicknames);
             }

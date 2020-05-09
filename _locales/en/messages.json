@@ -124,12 +124,12 @@
         "description": "ADD MEMBERS"
     },
     "addOrgMembers": {
-        "message": "ADD ORG MEMBERS",
-        "description": "ADD ORG MEMBERS"
+        "message": "ADD ALL",
+        "description": "ADD ALL"
     },
     "buttonsOrgMembers": {
-        "message": "DISPLAY BUTTONS IN ORG PAGE",
-        "description": "DISPLAY BUTTONS IN ORG PAGE"
+        "message": "BUTTONS IN MEMBERS PAGE",
+        "description": "BUTTONS IN MEMBERS PAGE"
     },
     "title_delete_members": {
         "message": "UNFOLLOW MEMBERS",
@@ -166,5 +166,25 @@
     "title_protected_members": {
         "message": "Protected Members",
         "description": "Protected Members"
+    },
+    "must_refine_search_more_than_3_chars":{
+        "message": "You must refine your search on members org page, at least 3 chars filled",
+        "description": "At least 3 chars filled"
+    },
+    "you_must_go_to_your_org_members_page_and_search":{
+        "message": "You must got to the org members page and seach for someone",
+        "description": "You must got to the org members page"
+    },
+    "warning":{
+        "message": "WARNING",
+        "description": "WARNING"
+    },
+    "this_add_all_missing_contacts":{
+        "message": "This action will send request to all missing contacts from all of your orgs automatically. Do you want to continue?",
+        "description": "This action will send request to all missing contacts."
+    },
+    "not_found":{
+        "message": "Not found",
+        "description": "Not found"
     }
 }

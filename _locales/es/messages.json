@@ -81,7 +81,7 @@
     "message": "petición pendiente"
   },
   "pending": {
-      "message": "Pendiente"
+    "message": "Pendiente"
   },
   "ErrCannotAddItself": {
     "message": "No puedes añadirte a ti"
@@ -96,7 +96,7 @@
     "message": "AÑADIR CONTACTOS"
   },
   "addOrgMembers": {
-    "message": "AÑADIR CONTACTOS FALTANTES"
+    "message": "TODOS"
   },
   "buttonsOrgMembers": {
     "message": "MOSTRAR BOTONES EN ORG"
@@ -127,5 +127,20 @@
   },
   "title_protected_members": {
     "message": "Contactos Protegidos"
+  },
+  "must_refine_search_more_than_3_chars": {
+    "message": "Debes refinar la búsqueda, al menos poner 3 caracteres"
+  },
+  "you_must_go_to_your_org_members_page_and_search": {
+    "message": "Debes ir a la página de miembros de la organización y buscar a alguien"
+  },
+  "warning": {
+    "message": "ATENCIÓN"
+  },
+  "this_add_all_missing_contacts": {
+    "message": "Esta acción enviará peticiones a todos los contactos que te falten de todas tus organizaciones automáticamente. ¿Quieres continuar?"
+  },
+  "not_found": {
+    "message": "No encontrado"
   }
 }

@@ -90,8 +90,13 @@ body {
     font-size: 16px;
 }
 
-.buttonsOrg{
-    width: 100%;
+.buttonOrgClass{
+    width: 65%;
+    float:left;
+}
+.addOrgClass{
+    width: 30%;
+    float:right;
 }
 
 #dataSaved {
@@ -249,7 +254,7 @@ ul {
     color: #ffa800;
 }
 
-.delete-member {
+.delete-member, .all-members {
     border-radius: 8px;
     background: green;
     cursor: pointer;
@@ -260,10 +265,10 @@ ul {
     color: #fff;
 }
 
-#delete-log span.warning {
+#delete-log span.warning, #contact-log span.warning  {
     height: 20px;
 }
-#delete-log span.warning div{
-    width: 325px;
+#delete-log span.warning div, #contact-log span.warning div{
+    width: 320px;
     float: left;
 }

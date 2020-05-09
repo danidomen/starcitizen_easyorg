@@ -194,6 +194,22 @@ buttonsOrgMembers.onclick = function(element) {
 }
 
 addOrgMembers.onclick = function(element) {
+    var confirmMsg = `<div><strong>${chrome.i18n.getMessage('warning')}</strong> ${chrome.i18n.getMessage('this_add_all_missing_contacts')}</div><button class="all-members">${chrome.i18n.getMessage('yes')}</button>`;
+    setMsgLog('contact-log', confirmMsg, 'warning', '0');
+}
+
+eraseMembers.onclick = function(element) {
+    resetLog();
+    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, { data: { action: "executeEraseMembers", orgNames, protectedNicknames } }, function(response) {
+
+        });
+    });
+}
+
+$(document).on('click', '.all-members', function() {
+    element = $(this)
+    element.parent().remove();
     if(orgNames.length == 0){
         var logmsg = {
             logId:'contact-log',
@@ -211,16 +227,7 @@ addOrgMembers.onclick = function(element) {
             });
         });
     }
-}
-
-eraseMembers.onclick = function(element) {
-    resetLog();
-    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, { data: { action: "executeEraseMembers", orgNames, protectedNicknames } }, function(response) {
-
-        });
-    });
-}
+})
 
 $(document).on('click', '.delete-member', function() {
     element = $(this)
