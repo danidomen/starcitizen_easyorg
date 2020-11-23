@@ -35,7 +35,7 @@ function callToAPI(url, data, success) {
     xhr.onreadystatechange = function() {
         if (xhr.readyState>3 && xhr.status==200) { success(xhr.responseText); }
     };
-    xhr.setRequestHeader('x-tavern-id', 'u43l1eqnluo3x');
+    xhr.setRequestHeader('x-tavern-id', 'spwf7gg6my44p');
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.setRequestHeader('x-rsi-token', getCk('Rsi-Token'));
     xhr.crossDomain = true;
@@ -240,7 +240,8 @@ function processMembers(orgName, type, protectedNicknames = null) {
         }
     
         if (orgQueriedMembers[orgName].length == 0) {
-            queryOrgMembers(orgName,type);
+            searchOrgMembersByAlphabet(orgName,type);
+            //queryOrgMembers(orgName,type);
         }
     } else {
         var orgPageValue = '';
@@ -262,7 +263,8 @@ function processMembers(orgName, type, protectedNicknames = null) {
     }
 }
 
-function queryOrgMembers(orgName,type, page = 1, maxPage = 0, pagesize = 100, search = '') {
+function queryOrgMembers(orgName,type, page = 1, maxPage = 0, pagesize = 25, search = '') {
+    //DEPRECATED, this not longer return results and always ErrAccessDenied
     var symbol = orgName;
     if (page <= maxPage || maxPage == 0) {
         if (type == 'add') {
@@ -297,6 +299,56 @@ function queryOrgMembers(orgName,type, page = 1, maxPage = 0, pagesize = 100, se
     }
 }
 
+function queryOrgMembersByLetter(letter, alphabetArray, orgName,type, page = 1, maxPage = 0, pagesize = 10) {
+    if ((page <= maxPage || maxPage == 0) && (typeof letter !== "undefined" && letter != "undefined")) {
+        var communityId = userOrgs[orgName].id;
+        callToAPI(ENDPOINT_SEARCH,'{"community_id":'+communityId+',"text":"'+letter+'","page":'+page+',"pagesize":'+pagesize+',"ignore_self":true}', function(response){
+            response = JSON.parse(response);
+            if (response.data && response.data.hasOwnProperty('hits') 
+            && response.data.hits.hasOwnProperty('total')) {
+                if (maxPage == 0) {
+                    membersPerOrg[orgName] += response.data.hits.total;
+                    maxPage = response.data.pages_total
+                }
+                if (response.data.members.length > 0){
+                    let arrayMembers = []
+                    response.data.members.forEach(member => {
+                        if(orgQueriedMembers[orgName].indexOf(member.nickname) == -1){
+                            arrayMembers.push(member.nickname);
+                        }
+                    });
+                    orgQueriedMembers[orgName] = [...orgQueriedMembers[orgName], ...arrayMembers]
+                    queryOrgMembersByLetter(letter,alphabetArray,orgName,type,page + 1, maxPage);
+                } else {
+                    queryOrgMembersByLetter(alphabetArray[alphabetArray.indexOf(letter)+1],alphabetArray,orgName,type);
+                }
+            }
+        });
+    } else if (typeof letter !== "undefined" && letter != "undefined") {
+        queryOrgMembersByLetter(alphabetArray[alphabetArray.indexOf(letter)+1],alphabetArray,orgName,type);
+    } else {
+        if (membersPerOrg.hasOwnProperty(orgName) || orgName == 'NO ORG DETECTED') {
+            if (type == 'add') {
+                addMembersPerOrg(orgName);
+            } else if (type == 'delete') {
+                eraseMembers(orgName, protectedNicknames);
+            }
+        }
+    }
+}
+
+
+function searchOrgMembersByAlphabet(orgName,type){
+    const alphabetArray = "123456789abcdefghijklmnopqrstuvwxyz".split("");
+    if (type == 'add') {
+        logMessage('contact-log', `${getTrltn('getting_batch_members_from')} <strong>${orgName}</strong>...`, 'info');
+    } else if (type == 'delete') {
+        logMessage('delete-log', `${getTrltn('getting_batch_members_from')} <strong>${orgName}</strong>...`, 'info');
+    }
+    membersPerOrg[orgName] = 0;
+    queryOrgMembersByLetter(alphabetArray[0],alphabetArray,orgName,type);
+}
+
 
 function eraseMembers(orgName, protectedNicknames, page = 1, maxPage = 0, cursor = '') {
     var protected = protectedNicknames;
@@ -312,7 +364,7 @@ function eraseMembers(orgName, protectedNicknames, page = 1, maxPage = 0, cursor
         }
         processedToDelete++;
     }
-    if (processedToDelete >= contactOnMyList*orgNamesErase.length) { 
+    //if (processedToDelete >= contactOnMyList*orgNamesErase.length) { 
         processedToDelete = 0;
         contactListFilter = [];
         for(var nickname in contactList){
@@ -325,7 +377,7 @@ function eraseMembers(orgName, protectedNicknames, page = 1, maxPage = 0, cursor
             logMessage('delete-log', confirmMsg, 'warning');
         }
         logMessage('delete-log', getTrltn('end_delete_process'), 'info');
-    }
+    //}
     return;
 }
 
